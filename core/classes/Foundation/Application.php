@@ -29,6 +29,21 @@ class Application {
      * Registers and runs all bootstrappers.
      */
     public static function run(): void {
+        self::registerBootstrappers();
+
+        self::runBootstrappers();
+
+        $request = Request::capture(
+            Container::get()->make(User::class),
+            $_GET['route']
+        );
+
+        self::runMiddlewares($request);
+
+        Response::make($request)->send();
+    }
+
+    private static function registerBootstrappers(): void {
         foreach (self::$_bootstrappers as $bootstrapper) {
             /** @var Bootstrapper $bootstrapper */
             $bootstrapper = new $bootstrapper();
@@ -37,24 +52,20 @@ class Application {
 
             self::$_registered_bootstrappers[] = $bootstrapper;
         }
+    }
 
+    private static function runBootstrappers(): void {
         foreach (self::$_registered_bootstrappers as $bootstrapper) {
             $bootstrapper->run();
         }
+    }
 
-        $request = Request::capture(
-            Container::get()->make(User::class),
-            $_GET['route']
-        );
-
+    private static function runMiddlewares(Request $request): void {
         foreach (self::$_middlewares as $middleware) {
             /** @var Middleware $middleware */
             $middleware = new $middleware();
 
-            $middleware->handle($request, Container::get());
+            $middleware->handle($request);
         }
-
-        Response::make($request)->send();
     }
-
 }

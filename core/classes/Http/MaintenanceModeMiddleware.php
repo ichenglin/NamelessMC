@@ -8,10 +8,10 @@ class MaintenanceModeMiddleware extends Middleware {
         'api',
     ];
 
-    public function handle(Request $request, Container $container): void {
-        $cache = $container->make(Cache::class);
-        $smarty = $container->make(Smarty::class);
-        $language = $container->make(Language::class);
+    public function handle(Request $request): void {
+        $cache = Container::get()->make(Cache::class);
+        $smarty = Container::get()->make(Smarty::class);
+        $language = Container::get()->make(Language::class);
 
         // Maintenance mode?
         $cache->setCache('maintenance_cache');

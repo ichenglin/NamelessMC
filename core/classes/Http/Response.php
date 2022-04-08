@@ -2,6 +2,12 @@
 
 class Response {
 
+    private Request $_request;
+
+    private function __construct(Request $request) {
+        $this->_request = $request;
+    }
+
     public static function make(Request $request): Response {
         return new Response($request);
     }
@@ -14,14 +20,15 @@ class Response {
         }
 
         // Get page to load from URL
-        if (!isset($_GET['route']) || $_GET['route'] == '/') {
-            if (((!isset($_GET['route']) || ($_GET['route'] != '/')) && count($directories) > 1)) {
+        if (!isset($_GET['route']) || $this->_request->route() == '/') {
+            if (((!isset($_GET['route']) || ($this->_request->route() != '/')) && count($directories) > 1)) {
                 require(ROOT_PATH . '/404.php');
-            } else {
-                // Homepage
-                $pages->setActivePage($pages->getPageByURL('/'));
-                require(ROOT_PATH . '/modules/Core/pages/index.php');
+                die();
             }
+
+            // Homepage
+            $pages->setActivePage($pages->getPageByURL('/'));
+            require(ROOT_PATH . '/modules/Core/pages/index.php');
             die();
         }
 

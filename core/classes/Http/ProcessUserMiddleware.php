@@ -2,14 +2,14 @@
 
 class ProcessUserMiddleware extends Middleware {
 
-    public function handle(Request $request, Container $container): void {
+    public function handle(Request $request): void {
         $user = $request->user();
-        $language = $container->make(Language::class);
-        $queries = $container->make(Queries::class);
-        $cache = $container->make(Cache::class);
+        $language = Container::get()->make(Language::class);
+        $queries = Container::get()->make(Queries::class);
+        $cache = Container::get()->make(Cache::class);
 
         $user->isLoggedIn()
-            ? $this->handleLoggedInUser($container, $user, $language, $queries)
+            ? $this->handleLoggedInUser($user, $language, $queries)
             : $this->handleGuest($queries);
 
         // Dark mode
@@ -24,7 +24,7 @@ class ProcessUserMiddleware extends Middleware {
         define('DARK_MODE', $darkMode);
     }
 
-    private function handleLoggedInUser(Container $container, User $user, Language $language, Queries $queries): void {
+    private function handleLoggedInUser(User $user, Language $language, Queries $queries): void {
         // Ensure a user is not banned
         if ($user->data()->isbanned == 1) {
             $user->logout();
@@ -106,7 +106,7 @@ class ProcessUserMiddleware extends Middleware {
             }
         }
 
-        $smarty = $container->make(Smarty::class);
+        $smarty = Container::get()->make(Smarty::class);
         // Basic user variables
         $smarty->assign('LOGGED_IN_USER', [
             'username' => $user->getDisplayname(true),
