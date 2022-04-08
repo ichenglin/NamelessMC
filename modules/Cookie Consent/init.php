@@ -13,4 +13,8 @@ require_once ROOT_PATH . '/modules/Cookie Consent/module.php';
 
 $cookie_language = new Language(ROOT_PATH . '/modules/Cookie Consent/language', LANGUAGE);
 
-$module = new CookieConsent_Module($language, $cookie_language, $pages);
+Container::get()->global($cookie_language, 'cookie_language');
+
+$module = Container::get()->inject(CookieConsent_Module::class, '__construct', [
+    'cookie_language' => $cookie_language
+]);

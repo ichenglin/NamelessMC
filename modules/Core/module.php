@@ -19,7 +19,7 @@ class Core_Module extends Module {
 
     public function __construct(Language $language, Pages $pages, User $user, Queries $queries, Navigation $navigation, Cache $cache, Endpoints $endpoints) {
         $this->_language = $language;
-        $this->_configuration = new Configuration($cache);
+        $this->_configuration = Container::get()->make(Configuration::class);
 
         $name = 'Core';
         $author = '<a href="https://samerton.me" target="_blank" rel="nofollow noopener">Samerton</a>';

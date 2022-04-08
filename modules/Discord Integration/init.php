@@ -2,4 +2,4 @@
 
 require_once ROOT_PATH . '/modules/Discord Integration/module.php';
 
-$module = new Discord_Module($language, $pages, $queries, $endpoints);
+$module = Container::get()->inject(Discord_Module::class);
